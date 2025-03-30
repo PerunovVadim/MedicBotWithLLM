@@ -4,7 +4,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from medic_bot import MedicBotCore
 from llm_service import LLMService
-from gca import GigaChatAdapter
+from gigachat_service import GigaChatAdapter
 from config import CONFIG
 from datetime import datetime, timezone
 import time

@@ -1,6 +1,6 @@
 import json
 
-from ba import BaseLLMAdapter
+from base_llm_adapter import BaseLLMAdapter
 
 
 class LLMService:

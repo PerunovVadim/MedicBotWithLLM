@@ -1,0 +1,108 @@
+openapi: 3.0.0
+info:
+  title: Medic Bot API
+  description: API для взаимодействия с медицинским ботом, который отвечает на вопросы, связанные с записью к врачу и работой поликлиники.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+    description: Локальный сервер для разработки
+paths:
+  /health:
+    get:
+      summary: Проверка работоспособности сервиса
+      description: Возвращает статус сервиса и текущее время в формате UTC.
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  timestamp:
+                    type: string
+                    format: date-time
+                    example: "2023-10-01T12:34:56Z"
+  /qa:
+    post:
+      summary: Получение ответа на вопрос
+      description: Отправляет вопрос медицинскому боту и получает ответ.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QARequest'
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  answer:
+                    type: string
+                    example: "Для записи к врачу позвоните по телефону +7 (XXX) XXX-XX-XX."
+                  links:
+                    type: array
+                    items:
+                      type: string
+                    example: []
+                  request_id:
+                    type: string
+                    format: uuid
+                    example: "550e8400-e29b-41d4-a716-446655440000"
+                  processing_time:
+                    type: number
+                    format: float
+                    example: 1.23
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Internal server error"
+                  code:
+                    type: integer
+                    example: 500
+components:
+  schemas:
+    QARequest:
+      type: object
+      properties:
+        question:
+          type: string
+          description: Вопрос, на который нужно получить ответ.
+          example: "Как записаться к врачу?"
+        temperature:
+          type: number
+          format: float
+          default: 0.7
+          description: Температурный параметр для генерации текста (0.0 - детерминированность, 1.0 - случайность).
+          example: 0.7
+        max_length:
+          type: integer
+          default: 500
+          description: Максимальная длина ответа в токенах.
+          example: 500
+        top_k:
+          type: integer
+          default: 3
+          description: Количество лучших вариантов для выбора при генерации текста.
+          example: 3
+        confidence_threshold:
+          type: number
+          format: float
+          default: 0.5
+          description: Порог уверенности для принятия решения о качестве ответа.
+          example: 0.5
+      required:
+        - question
